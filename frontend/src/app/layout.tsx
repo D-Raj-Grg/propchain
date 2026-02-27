@@ -11,8 +11,20 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "PropChain — NFT Property Marketplace",
-  description: "Buy, sell, and earn yield from virtual property NFTs using PROP tokens.",
+  description: "Buy, sell, and earn yield from virtual property NFTs using PROP tokens on Ethereum.",
   icons: { icon: "/favicon.svg" },
+  openGraph: {
+    title: "PropChain — NFT Property Marketplace",
+    description: "Mint, buy, and sell property NFTs on a decentralized marketplace. Earn passive PROP yield from every property you own.",
+    url: "https://propchain-marketplace.vercel.app",
+    siteName: "PropChain",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PropChain — NFT Property Marketplace",
+    description: "Mint, buy, and sell property NFTs on a decentralized marketplace. Earn passive PROP yield from every property you own.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

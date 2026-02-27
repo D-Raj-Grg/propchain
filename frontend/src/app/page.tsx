@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Building2 } from "lucide-react";
 import { StatsDashboard } from "@/components/StatsDashboard";
 import { MarketGrid } from "@/components/MarketGrid";
 import { MyProperties } from "@/components/MyProperties";
+import { MyOffers } from "@/components/MyOffers";
 import { MintProperty } from "@/components/MintProperty";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { activeChain } from "@/lib/chains";
 
-type Tab = "marketplace" | "my-properties" | "mint";
+type Tab = "marketplace" | "my-properties" | "my-offers" | "mint";
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("marketplace");
@@ -17,6 +19,7 @@ export default function Home() {
   const tabs: { key: Tab; label: string }[] = [
     { key: "marketplace", label: "Marketplace" },
     { key: "my-properties", label: "My Properties" },
+    { key: "my-offers", label: "My Offers" },
     { key: "mint", label: "Mint" },
   ];
 
@@ -26,23 +29,9 @@ export default function Home() {
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-gray-950/80 border-b border-gray-800/50 px-6 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <svg width="28" height="28" viewBox="0 0 32 32" className="shrink-0">
-              <defs>
-                <linearGradient id="nav-g" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#c084fc" />
-                  <stop offset="100%" stopColor="#ec4899" />
-                </linearGradient>
-              </defs>
-              <rect width="32" height="32" rx="8" fill="#1e293b" />
-              <path
-                d="M10 22V10h4l4 4-4 4h4l4 4"
-                fill="none"
-                stroke="url(#nav-g)"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <div className="shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center">
+              <Building2 className="w-4.5 h-4.5 text-white" size={18} strokeWidth={2.2} />
+            </div>
             <span className="font-bold text-lg text-white">PropChain</span>
           </div>
           <ConnectButton />
@@ -93,6 +82,7 @@ export default function Home() {
           {/* Tab Content */}
           {tab === "marketplace" && <MarketGrid />}
           {tab === "my-properties" && <MyProperties />}
+          {tab === "my-offers" && <MyOffers />}
           {tab === "mint" && <MintProperty />}
         </div>
       </ErrorBoundary>

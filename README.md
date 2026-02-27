@@ -1,6 +1,18 @@
 # PropChain — NFT Property Marketplace
 
+![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636?logo=solidity)
+![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js)
+![Hardhat](https://img.shields.io/badge/Hardhat-2.22-f0d000?logo=hardhat)
+![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-v5-4E5EE4?logo=openzeppelin)
+![Wagmi](https://img.shields.io/badge/Wagmi-v2-1C1B1F)
+![RainbowKit](https://img.shields.io/badge/RainbowKit-v2-7B3FE4)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 A decentralized marketplace for virtual property NFTs with escrow-based trading and passive yield earnings, built on Ethereum.
+
+> **Live Demo:** [propchain-marketplace.vercel.app](https://propchain-marketplace.vercel.app/)
+
+---
 
 ## Features
 
@@ -10,6 +22,40 @@ A decentralized marketplace for virtual property NFTs with escrow-based trading 
 - **Passive Yield** — Property owners earn PROP tokens over time, claimable per-property or in batch
 - **5% Marketplace Fee** — Configurable fee on every sale, collected to a designated address
 - **Full Security** — ReentrancyGuard, Ownable access control, SafeERC20 transfers
+
+## Deployed Contracts (Sepolia)
+
+| Contract | Address |
+|---|---|
+| **PropToken** (ERC-20) | [`0xF8C09b905F5e82Fe2D9AB267C34093e178d9E1E3`](https://sepolia.etherscan.io/address/0xF8C09b905F5e82Fe2D9AB267C34093e178d9E1E3) |
+| **PropertyNFT** (ERC-721) | [`0x31b0cF1A3946DAD11F2d1B2aaFF771f6F4B8CF0`](https://sepolia.etherscan.io/address/0x31b0cF1A3946DAD11F2d1B2aaFF771f6F4B8CF0) |
+| **PropertyMarketplace** | [`0xC79643c05A1b63843beaB5FD28237dF0ad79dfCa`](https://sepolia.etherscan.io/address/0xC79643c05A1b63843beaB5FD28237dF0ad79dfCa) |
+| **PropertyYield** | [`0x5F8D15f00c72061B2c66E0493a237D5692F75e96`](https://sepolia.etherscan.io/address/0x5F8D15f00c72061B2c66E0493a237D5692F75e96) |
+
+## Architecture
+
+```
+                    ┌─────────────────┐
+                    │   PropToken     │  ERC-20 "PROP" (10M supply)
+                    │   (Currency)    │  Ownership → PropertyYield (mints rewards)
+                    └────────┬────────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         │                   │                   │
+         ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│  PropertyNFT    │ │  Marketplace    │ │  PropertyYield  │
+│  (ERC-721)      │ │  (Trading)      │ │  (Rewards)      │
+│                 │ │                 │ │                 │
+│  • mintProperty │ │  • listProperty │ │  • registerProp │
+│  • on-chain URI │ │  • buyProperty  │ │  • pendingYield │
+│  • Enumerable   │ │  • makeOffer    │ │  • claimYield   │
+│                 │ │  • acceptOffer  │ │  • batchClaim   │
+│                 │ │  • cancelOffer  │ │  • yieldRate    │
+└─────────────────┘ │  • delistProp   │ └─────────────────┘
+                    │  • 5% fee       │
+                    └─────────────────┘
+```
 
 ## Smart Contracts
 
@@ -39,7 +85,7 @@ A decentralized marketplace for virtual property NFTs with escrow-based trading 
 cd contracts
 npm install
 npm run compile
-npm run test            # 46 tests
+npm run test            # 48 tests
 npm run node            # start local node
 npm run deploy:local    # deploy to localhost
 ```
@@ -63,6 +109,17 @@ cp .env.example .env
 npm run deploy:sepolia
 ```
 
+### Seed Demo Data
+
+After deploying, populate the marketplace with demo properties:
+
+```bash
+# Set contract addresses (from deploy output) in your .env or export them
+npm run seed:sepolia
+```
+
+This mints 6 properties, registers them for yield, and lists 4 on the marketplace.
+
 ## User Flow
 
 1. **Admin mints** property NFTs (name, location, area)
@@ -82,12 +139,19 @@ PropChain
   Marketplace — Direct Buy (3 tests)
   Marketplace — Escrow Offers (7 tests)
   Marketplace — Fees & Admin (5 tests)
+  Security — Reentrancy (2 tests)
   PropertyYield (9 tests)
   Access Control (5 tests)
   Integration — Full Flow (2 tests)
 
-46 passing
+48 passing
 ```
+
+## Screenshots
+
+| Marketplace | My Properties |
+|---|---|
+| Browse & buy listed properties | Manage portfolio, list/delist, claim yield |
 
 ## License
 

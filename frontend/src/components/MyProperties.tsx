@@ -28,17 +28,63 @@ export function MyProperties() {
   const [listTokenId, setListTokenId] = useState<number | null>(null);
   const [listPrice, setListPrice] = useState("");
 
+  // Check listing status for each owned property
+  const listingCalls = properties.map((p) => ({
+    address: MARKETPLACE_ADDRESS as `0x${string}`,
+    abi: MARKETPLACE_ABI,
+    functionName: "listings" as const,
+    args: [BigInt(p.tokenId)] as const,
+  }));
+
+  const { data: listingStatuses } = useReadContracts({
+    contracts: listingCalls,
+    query: { enabled: properties.length > 0, refetchInterval: 5_000 },
+  });
+
   // Approve NFT for marketplace
-  const { data: approveHash, writeContract: writeApprove, isPending: isApproving } = useWriteContract();
+  const { data: approveHash, writeContract: writeApprove, isPending: isApproving, error: approveError } = useWriteContract();
   const { isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({ hash: approveHash });
 
   // List property
-  const { data: listHash, writeContract: writeList, isPending: isListing } = useWriteContract();
+  const { data: listHash, writeContract: writeList, isPending: isListing, error: listError } = useWriteContract();
   const { isLoading: isConfirmingList, isSuccess: isListSuccess } = useWaitForTransactionReceipt({ hash: listHash });
 
+  // Delist property
+  const { data: delistHash, writeContract: writeDelist, isPending: isDelisting, error: delistError } = useWriteContract();
+  const { isLoading: isConfirmingDelist, isSuccess: isDelistSuccess } = useWaitForTransactionReceipt({ hash: delistHash });
+
   // Claim yield
-  const { data: claimHash, writeContract: writeClaim, isPending: isClaiming } = useWriteContract();
+  const { data: claimHash, writeContract: writeClaim, isPending: isClaiming, error: claimError } = useWriteContract();
   const { isLoading: isConfirmingClaim, isSuccess: isClaimSuccess } = useWaitForTransactionReceipt({ hash: claimHash });
+
+  // Error handling
+  useEffect(() => {
+    if (approveError) {
+      toast.dismiss("tx");
+      toast.error((approveError as any).shortMessage || "Approval failed");
+    }
+  }, [approveError]);
+
+  useEffect(() => {
+    if (listError) {
+      toast.dismiss("tx");
+      toast.error((listError as any).shortMessage || "Listing failed");
+    }
+  }, [listError]);
+
+  useEffect(() => {
+    if (delistError) {
+      toast.dismiss("tx");
+      toast.error((delistError as any).shortMessage || "Delisting failed");
+    }
+  }, [delistError]);
+
+  useEffect(() => {
+    if (claimError) {
+      toast.dismiss("yield");
+      toast.error((claimError as any).shortMessage || "Claim failed");
+    }
+  }, [claimError]);
 
   function handleList(tokenId: number) {
     if (!nftApprovedForAll) {
@@ -63,6 +109,16 @@ export function MyProperties() {
       abi: MARKETPLACE_ABI,
       functionName: "listProperty",
       args: [BigInt(listTokenId), parseEther(listPrice)],
+    });
+  }
+
+  function handleDelist(tokenId: number) {
+    toast.loading("Delisting property...", { id: "tx" });
+    writeDelist({
+      address: MARKETPLACE_ADDRESS,
+      abi: MARKETPLACE_ABI,
+      functionName: "delistProperty",
+      args: [BigInt(tokenId)],
     });
   }
 
@@ -98,6 +154,18 @@ export function MyProperties() {
       setListPrice("");
     }
   }, [isListSuccess, listHash]);
+
+  useEffect(() => {
+    if (isDelistSuccess && delistHash) {
+      const url = getExplorerTxUrl(delistHash);
+      toast.success("Property delisted!", {
+        id: "tx",
+        action: url
+          ? { label: "View on Explorer", onClick: () => window.open(url, "_blank") }
+          : undefined,
+      });
+    }
+  }, [isDelistSuccess, delistHash]);
 
   useEffect(() => {
     if (isClaimSuccess && claimHash) {
@@ -141,6 +209,8 @@ export function MyProperties() {
     );
   }
 
+  const isListPriceValid = listPrice !== "" && Number(listPrice) > 0;
+
   return (
     <div className="space-y-4">
       {/* Yield Summary */}
@@ -166,23 +236,28 @@ export function MyProperties() {
       {listTokenId !== null && (
         <div className="glass-card p-4 flex items-center gap-3 border-purple-500/30">
           <span className="text-sm text-gray-400">List Property #{listTokenId} for:</span>
-          <div className="flex items-center bg-gray-800/60 rounded-xl border border-gray-700/50 overflow-hidden flex-1 max-w-xs focus-within:border-purple-500/50">
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder="0.00"
-              value={listPrice}
-              onChange={(e) => {
-                if (/^\d*\.?\d*$/.test(e.target.value)) setListPrice(e.target.value);
-              }}
-              className="flex-1 bg-transparent px-3 py-2 text-white outline-none font-[family-name:var(--font-mono)] text-sm"
-            />
-            <span className="pr-3 text-gray-400 text-xs">PROP</span>
+          <div className="flex flex-col flex-1 max-w-xs">
+            <div className="flex items-center bg-gray-800/60 rounded-xl border border-gray-700/50 overflow-hidden focus-within:border-purple-500/50">
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={listPrice}
+                onChange={(e) => {
+                  if (/^\d*\.?\d*$/.test(e.target.value)) setListPrice(e.target.value);
+                }}
+                className="flex-1 bg-transparent px-3 py-2 text-white outline-none font-[family-name:var(--font-mono)] text-sm"
+              />
+              <span className="pr-3 text-gray-400 text-xs">PROP</span>
+            </div>
+            {listPrice !== "" && !isListPriceValid && (
+              <p className="text-red-400 text-xs mt-1">Price must be greater than 0</p>
+            )}
           </div>
           <button
             onClick={submitListing}
-            disabled={isListing || isConfirmingList}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold hover:brightness-110 transition disabled:opacity-50"
+            disabled={!isListPriceValid || isListing || isConfirmingList}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white text-sm font-semibold hover:brightness-110 transition disabled:opacity-50"
           >
             {isListing || isConfirmingList ? "Listing..." : "Confirm"}
           </button>
@@ -197,20 +272,28 @@ export function MyProperties() {
 
       {/* Property Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {properties.map((p, i) => (
-          <PropertyCard
-            key={p.tokenId}
-            tokenId={p.tokenId}
-            name={p.name}
-            location={p.location}
-            area={p.area}
-            yieldInfo={pendingYields[i] ? Number(pendingYields[i]).toFixed(4) : undefined}
-            onAction={() => handleList(p.tokenId)}
-            actionLabel={nftApprovedForAll ? "List for Sale" : "Approve & List"}
-            actionColor={nftApprovedForAll ? "purple" : "amber"}
-            isPending={isListing || isConfirmingList || isApproving}
-          />
-        ))}
+        {properties.map((p, i) => {
+          const listing = listingStatuses?.[i]?.result as [string, bigint, boolean] | undefined;
+          const isListed = listing?.[2] ?? false;
+          const listedPrice = listing?.[1];
+
+          return (
+            <PropertyCard
+              key={p.tokenId}
+              tokenId={p.tokenId}
+              name={p.name}
+              location={p.location}
+              area={p.area}
+              price={isListed ? listedPrice : undefined}
+              priceLabel={isListed ? "Listed Price" : undefined}
+              yieldInfo={pendingYields[i] ? Number(pendingYields[i]).toFixed(4) : undefined}
+              onAction={isListed ? () => handleDelist(p.tokenId) : () => handleList(p.tokenId)}
+              actionLabel={isListed ? "Delist" : nftApprovedForAll ? "List for Sale" : "Approve & List"}
+              actionColor={isListed ? "red" : nftApprovedForAll ? "purple" : "amber"}
+              isPending={isListing || isConfirmingList || isApproving || isDelisting || isConfirmingDelist}
+            />
+          );
+        })}
       </div>
     </div>
   );

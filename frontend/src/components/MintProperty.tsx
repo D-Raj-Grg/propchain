@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from "wagmi";
 import { parseEther } from "viem";
 import { toast } from "sonner";
 import { getExplorerTxUrl } from "@/lib/chains";
@@ -14,8 +14,25 @@ export function MintProperty() {
   const [area, setArea] = useState("");
   const [mintPrice, setMintPrice] = useState("");
 
-  const { data: hash, writeContract, isPending } = useWriteContract();
+  // Admin guard: read contract owner
+  const { data: contractOwner } = useReadContract({
+    address: PROPERTY_NFT_ADDRESS,
+    abi: PROPERTY_NFT_ABI,
+    functionName: "owner",
+  });
+
+  const isAdmin = address && contractOwner && address.toLowerCase() === (contractOwner as string).toLowerCase();
+
+  const { data: hash, writeContract, isPending, error: mintError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
+
+  // Error handling
+  useEffect(() => {
+    if (mintError) {
+      toast.dismiss("mint");
+      toast.error((mintError as any).shortMessage || "Minting failed");
+    }
+  }, [mintError]);
 
   function handleMint() {
     if (!name || !location || !area || !mintPrice || !address) return;
@@ -50,6 +67,18 @@ export function MintProperty() {
       <div className="glass-card p-8 text-center">
         <div className="text-4xl mb-3">&#x1F512;</div>
         <p className="text-gray-400">Connect your wallet to mint properties</p>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="glass-card p-8 text-center">
+        <div className="text-4xl mb-3">&#x1F6E1;</div>
+        <p className="text-gray-400 font-semibold">Admin Only</p>
+        <p className="text-xs text-gray-500 mt-1">
+          Only the contract owner can mint new properties.
+        </p>
       </div>
     );
   }
@@ -122,7 +151,7 @@ export function MintProperty() {
         <button
           onClick={handleMint}
           disabled={!name || !location || !area || !mintPrice || isPending || isConfirming}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending || isConfirming ? "Minting..." : "Mint Property NFT"}
         </button>

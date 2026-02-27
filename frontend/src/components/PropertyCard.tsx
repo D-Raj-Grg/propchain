@@ -19,7 +19,7 @@ interface PropertyCardProps {
 }
 
 const actionColors = {
-  purple: "from-purple-500 to-pink-500",
+  purple: "from-purple-500 to-cyan-500",
   emerald: "from-emerald-500 to-teal-500",
   amber: "from-amber-500 to-orange-500",
   red: "from-red-500 to-rose-500",

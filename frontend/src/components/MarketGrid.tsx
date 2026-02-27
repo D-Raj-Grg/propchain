@@ -90,12 +90,27 @@ export function MarketGrid() {
   }, [listingsData, totalSupply]);
 
   // Buy transaction
-  const { data: buyHash, writeContract: writeBuy, isPending: isBuying } = useWriteContract();
+  const { data: buyHash, writeContract: writeBuy, isPending: isBuying, error: buyError } = useWriteContract();
   const { isLoading: isConfirmingBuy, isSuccess: isBuySuccess } = useWaitForTransactionReceipt({ hash: buyHash });
 
   // Approve PROP for marketplace
-  const { data: approveHash, writeContract: writeApprove, isPending: isApproving } = useWriteContract();
+  const { data: approveHash, writeContract: writeApprove, isPending: isApproving, error: approveError } = useWriteContract();
   const { isLoading: isConfirmingApprove, isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({ hash: approveHash });
+
+  // Error handling
+  useEffect(() => {
+    if (buyError) {
+      toast.dismiss("tx");
+      toast.error((buyError as any).shortMessage || "Purchase failed");
+    }
+  }, [buyError]);
+
+  useEffect(() => {
+    if (approveError) {
+      toast.dismiss("tx");
+      toast.error((approveError as any).shortMessage || "Approval failed");
+    }
+  }, [approveError]);
 
   // Check allowance
   const { data: allowanceData } = useReadContracts({

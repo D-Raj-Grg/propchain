@@ -134,6 +134,13 @@ export const PROPERTY_NFT_ABI = [
     ],
     outputs: [{ name: "", type: "uint256" }],
   },
+  {
+    name: "owner",
+    type: "function",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "address" }],
+  },
 ] as const;
 
 export const MARKETPLACE_ABI = [

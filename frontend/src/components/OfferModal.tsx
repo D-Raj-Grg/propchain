@@ -21,11 +21,26 @@ export function OfferModal({ tokenId, onClose }: OfferModalProps) {
   const { address } = useAccount();
   const [amount, setAmount] = useState("");
 
-  const { data: approveHash, writeContract: writeApprove, isPending: isApproving } = useWriteContract();
+  const { data: approveHash, writeContract: writeApprove, isPending: isApproving, error: approveError } = useWriteContract();
   const { isSuccess: isApproveSuccess } = useWaitForTransactionReceipt({ hash: approveHash });
 
-  const { data: offerHash, writeContract: writeOffer, isPending: isOffering } = useWriteContract();
+  const { data: offerHash, writeContract: writeOffer, isPending: isOffering, error: offerError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: offerHash });
+
+  // Error handling
+  useEffect(() => {
+    if (approveError) {
+      toast.dismiss("offer");
+      toast.error((approveError as any).shortMessage || "Approval failed");
+    }
+  }, [approveError]);
+
+  useEffect(() => {
+    if (offerError) {
+      toast.dismiss("offer");
+      toast.error((offerError as any).shortMessage || "Offer failed");
+    }
+  }, [offerError]);
 
   // Check allowance
   const { data: allowanceData } = useReadContracts({
@@ -43,9 +58,10 @@ export function OfferModal({ tokenId, onClose }: OfferModalProps) {
   });
 
   const allowance = (allowanceData?.[0]?.result as bigint) ?? 0n;
+  const isValidAmount = amount !== "" && Number(amount) > 0;
 
   function handleSubmit() {
-    if (!amount || Number(amount) <= 0) return;
+    if (!isValidAmount) return;
 
     const parsed = parseEther(amount);
 
@@ -88,7 +104,7 @@ export function OfferModal({ tokenId, onClose }: OfferModalProps) {
     }
   }, [isSuccess, offerHash, onClose]);
 
-  const needsApproval = amount && Number(amount) > 0 && allowance < parseEther(amount || "0");
+  const needsApproval = isValidAmount && allowance < parseEther(amount || "0");
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -111,6 +127,9 @@ export function OfferModal({ tokenId, onClose }: OfferModalProps) {
           />
           <span className="pr-4 text-gray-400 text-sm font-medium">PROP</span>
         </div>
+        {amount !== "" && !isValidAmount && (
+          <p className="text-red-400 text-xs mt-1.5">Offer amount must be greater than 0</p>
+        )}
 
         <div className="flex gap-3 mt-5">
           <button
@@ -121,9 +140,9 @@ export function OfferModal({ tokenId, onClose }: OfferModalProps) {
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!amount || Number(amount) <= 0 || isOffering || isConfirming || isApproving}
+            disabled={!isValidAmount || isOffering || isConfirming || isApproving}
             className={`flex-1 py-2.5 rounded-xl text-white font-semibold text-sm hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r ${
-              needsApproval ? "from-amber-500 to-orange-500" : "from-purple-500 to-pink-500"
+              needsApproval ? "from-amber-500 to-orange-500" : "from-purple-500 to-cyan-500"
             }`}
           >
             {isOffering || isConfirming

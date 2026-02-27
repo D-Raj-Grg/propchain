@@ -29,7 +29,7 @@ const config: Config = {
         shimmer: "shimmer 1.5s infinite",
       },
       backgroundImage: {
-        "radial-hero": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(192,132,252,0.15), transparent)",
+        "radial-hero": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(168,85,247,0.12), rgba(6,182,212,0.06), transparent)",
       },
     },
   },
