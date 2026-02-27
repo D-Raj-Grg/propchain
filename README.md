@@ -149,6 +149,11 @@ PropChain
 
 ## Screenshots
 
+<img width="2814" height="1944" alt="image" src="https://github.com/user-attachments/assets/825fce4a-a16c-47b3-82cc-060771675039" />
+<img width="2946" height="1930" alt="image" src="https://github.com/user-attachments/assets/5ccf2f48-d461-4d48-948b-bedf95665472" />
+
+
+
 | Marketplace | My Properties |
 |---|---|
 | Browse & buy listed properties | Manage portfolio, list/delist, claim yield |
