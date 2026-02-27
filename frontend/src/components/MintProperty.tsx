@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from "wagmi";
 import { parseEther } from "viem";
 import { toast } from "sonner";
+import { Lock, ShieldAlert } from "lucide-react";
 import { getExplorerTxUrl } from "@/lib/chains";
 import { PROPERTY_NFT_ABI, PROPERTY_NFT_ADDRESS } from "@/lib/contracts";
 
@@ -65,7 +66,7 @@ export function MintProperty() {
   if (!address) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F512;</div>
+        <Lock className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">Connect your wallet to mint properties</p>
       </div>
     );
@@ -74,7 +75,7 @@ export function MintProperty() {
   if (!isAdmin) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F6E1;</div>
+        <ShieldAlert className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400 font-semibold">Admin Only</p>
         <p className="text-xs text-gray-500 mt-1">
           Only the contract owner can mint new properties.

@@ -27,10 +27,10 @@ A decentralized marketplace for virtual property NFTs with escrow-based trading 
 
 | Contract | Address |
 |---|---|
-| **PropToken** (ERC-20) | [`0xF8C09b905F5e82Fe2D9AB267C34093e178d9E1E3`](https://sepolia.etherscan.io/address/0xF8C09b905F5e82Fe2D9AB267C34093e178d9E1E3) |
-| **PropertyNFT** (ERC-721) | [`0x31b0cF1A3946DAD11F2d1B2aaFF771f6F4B8CF0`](https://sepolia.etherscan.io/address/0x31b0cF1A3946DAD11F2d1B2aaFF771f6F4B8CF0) |
-| **PropertyMarketplace** | [`0xC79643c05A1b63843beaB5FD28237dF0ad79dfCa`](https://sepolia.etherscan.io/address/0xC79643c05A1b63843beaB5FD28237dF0ad79dfCa) |
-| **PropertyYield** | [`0x5F8D15f00c72061B2c66E0493a237D5692F75e96`](https://sepolia.etherscan.io/address/0x5F8D15f00c72061B2c66E0493a237D5692F75e96) |
+| **PropToken** (ERC-20) | [`0x5fb379720B34f3d2d5C54Ac6644C84972Ef702ca`](https://sepolia.etherscan.io/address/0x5fb379720B34f3d2d5C54Ac6644C84972Ef702ca) |
+| **PropertyNFT** (ERC-721) | [`0xdfFC2E373c6E5d51783f62F0b1124EEa052a276A`](https://sepolia.etherscan.io/address/0xdfFC2E373c6E5d51783f62F0b1124EEa052a276A) |
+| **PropertyMarketplace** | [`0x7EA151ec169123b8c8804696bc218697009a92b1`](https://sepolia.etherscan.io/address/0x7EA151ec169123b8c8804696bc218697009a92b1) |
+| **PropertyYield** | [`0x6e0A0Da2C0f29e503981da5C960BFEc8c95697c8`](https://sepolia.etherscan.io/address/0x6e0A0Da2C0f29e503981da5C960BFEc8c95697c8) |
 
 ## Architecture
 

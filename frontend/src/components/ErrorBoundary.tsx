@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { TriangleAlert } from "lucide-react";
 
 interface Props {
   children: React.ReactNode;
@@ -28,7 +29,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="glass-card p-8 text-center max-w-md mx-auto mt-12">
-          <div className="text-4xl mb-4">&#x26A0;</div>
+          <TriangleAlert className="w-10 h-10 text-amber-400 mx-auto mb-4" />
           <h2 className="text-lg font-semibold text-white mb-2">Something went wrong</h2>
           <p className="text-sm text-gray-400 mb-6">
             An unexpected error occurred. Please try again.

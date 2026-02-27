@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useReadContracts, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther, formatUnits, maxUint256 } from "viem";
 import { toast } from "sonner";
+import { Home, Hammer } from "lucide-react";
 import { PropertyCard } from "./PropertyCard";
 import { OfferModal } from "./OfferModal";
 import { getExplorerTxUrl } from "@/lib/chains";
@@ -171,7 +172,7 @@ export function MarketGrid() {
   if (!address) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F3E0;</div>
+        <Home className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">Connect your wallet to browse the marketplace</p>
       </div>
     );
@@ -180,7 +181,7 @@ export function MarketGrid() {
   if (listings.length === 0) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F3D7;</div>
+        <Hammer className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">No properties listed yet</p>
         <p className="text-xs text-gray-500 mt-1">Properties will appear here once listed for sale</p>
       </div>

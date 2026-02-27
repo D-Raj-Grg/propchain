@@ -1,6 +1,7 @@
 "use client";
 
 import { formatUnits } from "viem";
+import { MapPin } from "lucide-react";
 
 interface PropertyCardProps {
   tokenId: number;
@@ -47,7 +48,7 @@ export function PropertyCard({
         <div>
           <h3 className="font-semibold text-white text-lg">{name}</h3>
           <p className="text-sm text-gray-400 flex items-center gap-1">
-            <span className="text-purple-400">&#x25C9;</span> {location}
+            <MapPin className="w-3.5 h-3.5 text-purple-400" /> {location}
           </p>
         </div>
         <span className="text-xs bg-gray-800 px-2 py-1 rounded-lg text-gray-400 font-mono">

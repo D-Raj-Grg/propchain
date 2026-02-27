@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContracts } from "wagmi";
 import { parseEther, formatUnits } from "viem";
 import { toast } from "sonner";
+import { KeyRound, Building2 } from "lucide-react";
 import { PropertyCard } from "./PropertyCard";
 import { getExplorerTxUrl } from "@/lib/chains";
 import { useUserProperties } from "@/hooks/usePropertyNFT";
@@ -183,7 +184,7 @@ export function MyProperties() {
   if (!address) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F511;</div>
+        <KeyRound className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">Connect your wallet to view your properties</p>
       </div>
     );
@@ -202,7 +203,7 @@ export function MyProperties() {
   if (balance === 0) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F3E2;</div>
+        <Building2 className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">You don't own any properties yet</p>
         <p className="text-xs text-gray-500 mt-1">Buy properties from the marketplace to start earning yield</p>
       </div>

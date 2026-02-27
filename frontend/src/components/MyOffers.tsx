@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContracts } from "wagmi";
 import { formatUnits } from "viem";
 import { toast } from "sonner";
+import { Wallet, Inbox, MapPin } from "lucide-react";
 import { getExplorerTxUrl } from "@/lib/chains";
 import {
   MARKETPLACE_ABI,
@@ -169,7 +170,7 @@ export function MyOffers() {
   if (!address) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F4DD;</div>
+        <Wallet className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">Connect your wallet to view your offers</p>
       </div>
     );
@@ -178,7 +179,7 @@ export function MyOffers() {
   if (userOffers.length === 0) {
     return (
       <div className="glass-card p-8 text-center">
-        <div className="text-4xl mb-3">&#x1F4E8;</div>
+        <Inbox className="w-10 h-10 text-gray-500 mx-auto mb-3" />
         <p className="text-gray-400">No active offers</p>
         <p className="text-xs text-gray-500 mt-1">Make offers on properties in the marketplace</p>
       </div>
@@ -198,7 +199,7 @@ export function MyOffers() {
             </div>
             {o.propertyLocation && (
               <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                <span className="text-purple-400">&#x25C9;</span> {o.propertyLocation}
+                <MapPin className="w-3 h-3 text-purple-400" /> {o.propertyLocation}
               </p>
             )}
           </div>
