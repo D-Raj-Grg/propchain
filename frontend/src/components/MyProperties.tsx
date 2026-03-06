@@ -132,6 +132,7 @@ export function MyProperties() {
       abi: PROPERTY_YIELD_ABI,
       functionName: "batchClaimYield",
       args: [tokenIds.map((id) => BigInt(id))],
+      gas: BigInt(150_000 + tokenIds.length * 80_000),
     });
   }
 
