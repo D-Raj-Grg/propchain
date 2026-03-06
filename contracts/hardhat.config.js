@@ -15,6 +15,7 @@ module.exports = {
   networks: {
     localhost: {
       url: "http://127.0.0.1:8545",
+      blockGasLimit: 30_000_000,
     },
     sepolia: {
       url: process.env.SEPOLIA_RPC_URL || "",
