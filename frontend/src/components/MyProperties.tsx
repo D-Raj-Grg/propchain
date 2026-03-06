@@ -55,8 +55,8 @@ export function MyProperties() {
   const { isLoading: isConfirmingDelist, isSuccess: isDelistSuccess } = useWaitForTransactionReceipt({ hash: delistHash });
 
   // Claim yield
-  const { data: claimHash, writeContract: writeClaim, isPending: isClaiming, error: claimError } = useWriteContract();
-  const { isLoading: isConfirmingClaim, isSuccess: isClaimSuccess } = useWaitForTransactionReceipt({ hash: claimHash });
+  const { data: claimHash, writeContract: writeClaim, isPending: isClaiming, error: claimError, reset: resetClaim } = useWriteContract();
+  const { isLoading: isConfirmingClaim, isSuccess: isClaimSuccess, isError: isClaimTxError } = useWaitForTransactionReceipt({ hash: claimHash });
 
   // Error handling
   useEffect(() => {
@@ -84,8 +84,17 @@ export function MyProperties() {
     if (claimError) {
       toast.dismiss("yield");
       toast.error((claimError as any).shortMessage || "Claim failed");
+      resetClaim();
     }
-  }, [claimError]);
+  }, [claimError, resetClaim]);
+
+  useEffect(() => {
+    if (isClaimTxError) {
+      toast.dismiss("yield");
+      toast.error("Claim transaction failed on-chain");
+      resetClaim();
+    }
+  }, [isClaimTxError, resetClaim]);
 
   function handleList(tokenId: number) {
     if (!nftApprovedForAll) {
